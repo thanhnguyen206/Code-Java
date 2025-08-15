@@ -1,5 +1,5 @@
 
-package LEC3_EXERCISE;
+package Assignment3;
 import java.util.Scanner;
 public class EX_6 {   
     public static void main(String[] args) {
