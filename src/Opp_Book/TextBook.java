@@ -3,7 +3,7 @@ package Opp_Book;
 public class TextBook extends Book {
     private String subject;
 
-    public TextBook(java.lang.String id, java.lang.String title, java.lang.Double basePrice, java.lang.String subject) {
+    public TextBook(String id, String title, double basePrice, String subject) {
         super(id, title, basePrice);
         this.subject = subject;
     }
@@ -18,9 +18,10 @@ public class TextBook extends Book {
 
     @Override
     public void displayDetails() {
+        System.out.println("--- Textbook Details ---");
         super.displayDetails();
-        System.out.println("Subject: " + this.subject);
-        System.out.println("Final Price: " + calculatePrice());
+        System.out.println("Subject: " + subject);
+        System.out.println("Calculated Price: $" + String.format("%.2f", calculatePrice()));
     }
 
     @Override

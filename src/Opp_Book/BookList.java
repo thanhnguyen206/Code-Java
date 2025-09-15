@@ -9,7 +9,8 @@ public class BookList {
     public BookList() {
         this.bookList = new ArrayList<>();
     }
-
+    
+    
     public ArrayList<Book> getBookList() {
         return bookList;
     }
@@ -18,73 +19,49 @@ public class BookList {
         this.bookList = bookList;
     }
 
-    // Phương thức thêm sách mới, nhận loại sách để biết cần nhập thông tin gì
-    public void addBook(Book bookType) {
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter Book ID: ");
-        String id = scanner.nextLine();
-        System.out.print("Enter Title: ");
-        String title = scanner.nextLine();
-        System.out.print("Enter Base Price: ");
-        double basePrice = scanner.nextDouble();
-        scanner.nextLine();
-
-        if (bookType instanceof TextBook) {
-            System.out.print("Enter Subject: ");
-            String subject = scanner.nextLine();
-            TextBook newTextBook = new TextBook(id, title, basePrice, subject);
-            bookList.add(newTextBook);
-        } else if (bookType instanceof ReferenceBook) {
-            System.out.print("Enter Publisher: ");
-            String publisher = scanner.nextLine();
-            ReferenceBook newReferenceBook = new ReferenceBook(id, title, basePrice, publisher);
-            bookList.add(newReferenceBook);
-        }
-        System.out.println("Book added successfully!");
-    }
-
-    public boolean updateBookById(String id) {
-        Scanner scanner = new Scanner(System.in);
-        Book bookToUpdate = findBookById(id);
-        if (bookToUpdate != null) {
-            System.out.println("Book found. Enter new details:");
-            System.out.print("Enter new Title: ");
-            bookToUpdate.setTitle(scanner.nextLine());
-            System.out.print("Enter new Base Price: ");
-            bookToUpdate.setBasePrice(scanner.nextDouble());
-            scanner.nextLine();
-            if (bookToUpdate instanceof TextBook) {
-                System.out.print("Enter new Subject: ");
-                ((TextBook) bookToUpdate).setSubject(scanner.nextLine());
-            } else if (bookToUpdate instanceof ReferenceBook) {
-                System.out.print("Enter new Publisher: ");
-                ((ReferenceBook) bookToUpdate).setPublisher(scanner.nextLine());
-            }
-            System.out.println("Book updated successfully!");
-            return true;
-        }
-        System.out.println("Book with ID " + id + " not found.");
-        return false;
-    }
-
-    public boolean deleteBookById(String id) {
-        Book bookToDelete = findBookById(id);
-        if (bookToDelete != null) {
-            bookList.remove(bookToDelete);
-            System.out.println("Book with ID " + id + " deleted successfully!");
-            return true;
-        }
-        System.out.println("Book with ID " + id + " not found.");
-        return false;
+    public void addBook(Book book) {
+        bookList.add(book);
     }
 
     public Book findBookById(String id) {
         for (Book book : bookList) {
-            if (book.getId().equals(id)) {
+            if (book.getId().equalsIgnoreCase(id)) {
                 return book;
             }
         }
-        return null;
+        return null; 
+    }
+
+    public boolean updateBookById(String id) {
+        Book bookToUpdate = findBookById(id);
+        if (bookToUpdate != null) {
+            Scanner scanner = new Scanner(System.in);
+            System.out.print("Enter new title: ");
+            bookToUpdate.setTitle(scanner.nextLine());
+            System.out.print("Enter new base price: ");
+            bookToUpdate.setBasePrice(Double.parseDouble(scanner.nextLine()));
+
+            if (bookToUpdate instanceof TextBook) {
+                TextBook tb = (TextBook) bookToUpdate;
+                System.out.print("Enter new subject: ");
+                tb.setSubject(scanner.nextLine());
+            } else if (bookToUpdate instanceof ReferenceBook) {
+                ReferenceBook rb = (ReferenceBook) bookToUpdate;
+                System.out.print("Enter new publisher: ");
+                rb.setPublisher(scanner.nextLine());
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public boolean deleteBookById(String id) {
+        Book bookToRemove = findBookById(id);
+        if (bookToRemove != null) {
+            bookList.remove(bookToRemove);
+            return true;
+        }
+        return false;
     }
 
     public void displayAllBooks() {
@@ -92,10 +69,9 @@ public class BookList {
             System.out.println("The book list is empty.");
             return;
         }
-        System.out.println("--- All Books in the List ---");
         for (Book book : bookList) {
             book.displayDetails();
-            System.out.println("----------------------------");
+            System.out.println(); 
         }
     }
 
@@ -113,9 +89,16 @@ public class BookList {
     }
 
     public void countBooks() {
-        long textBookCount = bookList.stream().filter(b -> b instanceof TextBook).count();
-        long referenceBookCount = bookList.stream().filter(b -> b instanceof ReferenceBook).count();
-        System.out.println("Total TextBooks: " + textBookCount);
-        System.out.println("Total ReferenceBooks: " + referenceBookCount);
+        int textBookCount = 0;
+        int refBookCount = 0;
+        for (Book book : bookList) {
+            if (book instanceof TextBook) {
+                textBookCount++;
+            } else if (book instanceof ReferenceBook) {
+                refBookCount++;
+            }
+        }
+        System.out.println("Total number of TextBooks: " + textBookCount);
+        System.out.println("Total number of ReferenceBooks: " + refBookCount);
     }
 }
