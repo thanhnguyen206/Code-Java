@@ -444,12 +444,13 @@ public class JFToy extends javax.swing.JFrame {
     }//GEN-LAST:event_btnSaveActionPerformed
 
     private void tblToyMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblToyMouseClicked
-
+        this.tblToy.getSelectedRow();
+        View();
     }//GEN-LAST:event_tblToyMouseClicked
 
     private void tblToyKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tblToyKeyReleased
         // TODO add your handling code here:
-
+        this.tblToy.getSelectedRow();
     }//GEN-LAST:event_tblToyKeyReleased
 
     private void btnAddMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAddMouseClicked
