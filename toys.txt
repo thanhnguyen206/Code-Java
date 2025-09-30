@@ -1,0 +1,4 @@
+111,Ô tô,Car,100000.0,2
+222,Ex,Motobike,50000.0,5
+333,winner,Motobuke,40000.0,7
+444,sh,motobike,600000.0,4

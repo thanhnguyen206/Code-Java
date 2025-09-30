@@ -13,15 +13,16 @@ public class JFToy extends javax.swing.JFrame {
     ArrayList<Toy> toyList = new ArrayList<>();
     DefaultTableModel model;
     Toy x;
+    private String currentAction = "";
 
     public JFToy() {
         initComponents();
         this.setLocationRelativeTo(null);
         model = (DefaultTableModel) tblToy.getModel();
         model.setRowCount(0);
-        this.toyList.add(new Toy("111","Ô tô","Car",100000,2));
-        this.toyList.add(new Toy("222","Ex","Motobike",50000,5));
-        this.toyList.add(new Toy("333","winner","Motobuke",40000,0));
+        this.toyList.add(new Toy("111", "Ô tô", "Car", 100000, 2));
+        this.toyList.add(new Toy("222", "Ex", "Motobike", 50000, 5));
+        this.toyList.add(new Toy("333", "winner", "Motobuke", 40000, 0));
         View();
         ViewTable();
     }
@@ -39,7 +40,20 @@ public class JFToy extends javax.swing.JFrame {
             this.txtQuantity.setText(String.valueOf(x.getQuantity()));
         } else {
         }
+        OnOff(true, false);
     }
+
+    public void OnOff(boolean a, boolean b) {
+        this.btnSave.show(b);
+        this.btnCancel.show(b);
+        //----------------
+        this.btnAdd.show(a);
+        this.btnEdit.show(a);
+        this.btnDelete.show(a);
+        this.btnSearch.show(a);
+
+    }
+
     public void ViewTable() {
 
         DefaultTableModel model = (DefaultTableModel) this.tblToy.getModel();
@@ -47,7 +61,7 @@ public class JFToy extends javax.swing.JFrame {
         int n = 1;
         for (Toy x : toyList) {
 
-            model.addRow(new Object[]{n++, x.getId(), x.getName(), x.getCategory(),x.getPrice(),x.getQuantity()});
+            model.addRow(new Object[]{n++, x.getId(), x.getName(), x.getCategory(), x.getPrice(), x.getQuantity()});
 
         }
     }
@@ -352,44 +366,61 @@ public class JFToy extends javax.swing.JFrame {
     }//GEN-LAST:event_txtCategoryActionPerformed
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
-        String id = txtID.getText();
-        String name = txtName.getText();
-        String category = txtCategory.getText();
-        double price = Double.parseDouble(txtPrice.getText());
-        int quantity = Integer.parseInt(txtQuantity.getText());
+        txtID.setText("");
+        txtName.setText("");
+        txtCategory.setText("");
+        txtPrice.setText("");
+        txtQuantity.setText("");
 
-        Toy toy = new Toy(id, name, category, price, quantity);
-        toyList.add(toy);
-        model.addRow(new Object[]{id, name, category, price, quantity});
+        txtID.setEditable(true);
+        currentAction = "add";
+        OnOff(false, true);
 
 
     }//GEN-LAST:event_btnAddActionPerformed
 
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
-        int row = tblToy.getSelectedRow();
-        if (row >= 0) {
-            Toy toy = toyList.get(row);
-            toy.setName(txtName.getText());
-            toy.setCategory(txtCategory.getText());
-            toy.setPrice(Double.parseDouble(txtPrice.getText()));
-            toy.setQuantity(Integer.parseInt(txtQuantity.getText()));
-
-            model.setValueAt(toy.getName(), row, 2);
-            model.setValueAt(toy.getCategory(), row, 3);
-            model.setValueAt(toy.getPrice(), row, 4);
-            model.setValueAt(toy.getQuantity(), row, 5);
-
+        int selectedRow = tblToy.getSelectedRow();
+        if (selectedRow >= 0) {
+            currentAction = "edit";
+            txtID.setEditable(false);
+            OnOff(false, true);
+        } else {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn một sản phẩm để sửa!");
         }
+
+        OnOff(false, true);
+
 
     }//GEN-LAST:event_btnEditActionPerformed
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
-        int row = tblToy.getSelectedRow();
-        if (row >= 0) {
-            toyList.remove(row);
-            model.removeRow(row);
+        int selectedRow = tblToy.getSelectedRow();
 
+        if (selectedRow >= 0) {
+            String toyName = toyList.get(selectedRow).getName();
+
+            int confirm = JOptionPane.showConfirmDialog(this,
+                    "Bạn có chắc chắn muốn xóa sản phẩm '" + toyName + "' không?",
+                    "Xác nhận xóa",
+                    JOptionPane.YES_NO_OPTION);
+
+            if (confirm == JOptionPane.YES_OPTION) {
+                toyList.remove(selectedRow);
+                ViewTable();
+                txtID.setText("");
+                txtName.setText("");
+                txtCategory.setText("");
+                txtPrice.setText("");
+                txtQuantity.setText("");
+
+                JOptionPane.showMessageDialog(this, "Đã xóa thành công!");
+            }
+
+        } else {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn một sản phẩm để xóa!");
         }
+
 
     }//GEN-LAST:event_btnDeleteActionPerformed
 
@@ -409,14 +440,10 @@ public class JFToy extends javax.swing.JFrame {
     }//GEN-LAST:event_btnSearchActionPerformed
 
     private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
-        txtID.setText("");
-        txtName.setText("");
-        txtPrice.setText("");
-        txtQuantity.setText("1");
-        txtCategory.setText("");
-        btnSearch.setText("");
-        tblToy.clearSelection();
-
+        OnOff(true, false);
+        txtID.setEditable(true);
+        currentAction = "";
+        View();
     }//GEN-LAST:event_btnCancelActionPerformed
 
     private void txtPriceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPriceActionPerformed
@@ -428,6 +455,59 @@ public class JFToy extends javax.swing.JFrame {
     }//GEN-LAST:event_txtQuantityActionPerformed
 
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
+        if (currentAction.equals("add")) {
+            try {
+                String id = txtID.getText();
+                String name = txtName.getText();
+                String category = txtCategory.getText();
+                double price = Double.parseDouble(txtPrice.getText());
+                int quantity = Integer.parseInt(txtQuantity.getText());
+
+                if (id.isEmpty() || name.isEmpty()) {
+                    JOptionPane.showMessageDialog(this, "ID và Tên không được để trống!");
+                    return;
+                }
+
+                for (Toy t : toyList) {
+                    if (t.getId().equals(id)) {
+                        JOptionPane.showMessageDialog(this, "ID sản phẩm đã tồn tại!");
+                        return;
+                    }
+                }
+
+                Toy newToy = new Toy(id, name, category, price, quantity);
+                toyList.add(newToy);
+                JOptionPane.showMessageDialog(this, "Thêm mới thành công!");
+
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this, "Giá và Số lượng phải là số!");
+                return;
+            }
+
+        } else if (currentAction.equals("edit")) {
+            int selectedRow = tblToy.getSelectedRow();
+            if (selectedRow >= 0) {
+                try {
+                    Toy toy = toyList.get(selectedRow);
+                    toy.setName(txtName.getText());
+                    toy.setCategory(txtCategory.getText());
+                    toy.setPrice(Double.parseDouble(txtPrice.getText()));
+                    toy.setQuantity(Integer.parseInt(txtQuantity.getText()));
+
+                    JOptionPane.showMessageDialog(this, "Cập nhật thành công!");
+
+                } catch (NumberFormatException e) {
+                    JOptionPane.showMessageDialog(this, "Giá và Số lượng phải là số!");
+                    return;
+                }
+            }
+        }
+
+        ViewTable();
+        OnOff(true, false);
+        txtID.setEditable(true);
+        currentAction = "";
+
         try {
             BufferedWriter bw = new BufferedWriter(new FileWriter("toys.txt"));
             for (Toy toy : toyList) {
@@ -436,10 +516,10 @@ public class JFToy extends javax.swing.JFrame {
                 bw.newLine();
             }
             bw.close();
-            JOptionPane.showMessageDialog(this, "Saved successfully!");
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "Error saving file: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "Lỗi khi lưu file: " + e.getMessage());
         }
+
 
     }//GEN-LAST:event_btnSaveActionPerformed
 
